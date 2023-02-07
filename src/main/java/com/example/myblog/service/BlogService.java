@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class BlogService {
@@ -22,25 +23,25 @@ public class BlogService {
         return new BlogResponseDto(blog);
     }
 
+
     @Transactional(readOnly = true)
     public List<Blog> getBlog() {
         return blogRepository.findAllByOrderByModifiedAtDesc();
     }
 
-
-    @Transactional(readOnly = true)
-    public BlogRequestDto blog(Long id) {
-        Blog blog = blogRepository.findById(id).orElseThrow(
-                ()  -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-        );
-
-        return new BlogRequestDto();
-    }
+//한개 조회
+@Transactional
+public Optional<Blog> getBlogs(Long id) {
+    Blog blog = blogRepository.findById(id).orElseThrow(
+            () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+    );
+    return blogRepository.findById(id);
+}
 
     @Transactional
     public Long updateBlog(Long id, BlogRequestDto requestDto) {
         if (!validatePassword(id, requestDto.getPassword())) {      //비밀번호가 같지 않을 때 사용!
-            return -99L;
+            return -999L;
         }
 
         Blog blog = blogRepository.findById(id).orElseThrow(
@@ -54,7 +55,7 @@ public class BlogService {
     @Transactional
     public Long deleteBlog(Long id, String password) {
         if (!validatePassword(id, password)) {
-            return 444L;
+            return -999L;
         }
 
         blogRepository.deleteById(id);
