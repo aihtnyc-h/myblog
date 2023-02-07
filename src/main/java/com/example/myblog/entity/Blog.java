@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Blog extends Timestamped{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)     // AUTO말고 다른 타입들 공부하기
     private Long id; // 기본키 설정!
     @Column(nullable = false)
     private String username;

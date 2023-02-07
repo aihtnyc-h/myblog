@@ -54,7 +54,7 @@ public class BlogService {
     @Transactional
     public Long deleteBlog(Long id, String password) {
         if (!validatePassword(id, password)) {
-            return -99L;
+            return 444L;
         }
 
         blogRepository.deleteById(id);
