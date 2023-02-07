@@ -16,10 +16,10 @@ public class BlogService {
     private final BlogRepository blogRepository;
 
     @Transactional
-    public Blog createBlog(BlogRequestDto requestDto) {
+    public BlogResponseDto createBlog(BlogRequestDto requestDto) {
         Blog blog = new Blog(requestDto);
         blogRepository.save(blog);
-        return blog;
+        return new BlogResponseDto(blog);
     }
 
     @Transactional(readOnly = true)

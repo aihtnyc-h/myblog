@@ -1,6 +1,7 @@
 package com.example.myblog.controller;
 
 import com.example.myblog.dto.BlogRequestDto;
+import com.example.myblog.dto.BlogResponseDto;
 import com.example.myblog.entity.Blog;
 import com.example.myblog.service.BlogService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class BlogController {
     }
     // 게시글 생성하기 서버
     @PostMapping("/api/blog")
-    public Blog createBlog(@RequestBody BlogRequestDto requestDto) {
+    public BlogResponseDto createBlog(@RequestBody BlogRequestDto requestDto) {
         return blogService.createBlog(requestDto);
     }
 
