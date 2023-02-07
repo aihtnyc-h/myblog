@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +18,32 @@ import java.util.Optional;
 public class BlogService {
     private final BlogRepository blogRepository;
 
+
+//    @Transactional(readOnly = true)
+//    public List<Blog> getBlogs() {
+//        return blogRepository.findAllByOrderByModifiedAtDesc();
+//    }
+//    @Transactional
+//    public Optional<Blog> getBlog(Long id) {
+//        Blog blog = blogRepository.findById(id).orElseThrow(
+//                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+//        );
+//        return Optional.ofNullable(blog);
+//    }
+//전체조회
+@Transactional(readOnly = true)
+public List<Blog> getBlog() {
+    return blogRepository.findAllByOrderByModifiedAtDesc();
+}
+//한개 조회
+    @Transactional
+    public Optional<Blog> getBlogs(Long id) {
+    Blog blog = blogRepository.findById(id).orElseThrow(
+            () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+    );
+    return blogRepository.findById(id);
+}
+//생성
     @Transactional
     public BlogResponseDto createBlog(BlogRequestDto requestDto) {
         Blog blog = new Blog(requestDto);
@@ -23,50 +51,37 @@ public class BlogService {
         return new BlogResponseDto(blog);
     }
 
-
     @Transactional(readOnly = true)
-    public List<Blog> getBlog() {
-        return blogRepository.findAllByOrderByModifiedAtDesc();
+    public BlogRequestDto blog(Long id) {
+        Blog blog = blogRepository.findById(id).orElseThrow(
+                ()  -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
+        return new BlogRequestDto();
     }
-
-//한개 조회
-@Transactional
-public Optional<Blog> getBlogs(Long id) {
-    Blog blog = blogRepository.findById(id).orElseThrow(
-            () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-    );
-    return blogRepository.findById(id);
-}
-
+    //수정
     @Transactional
     public Long updateBlog(Long id, BlogRequestDto requestDto) {
         if (!validatePassword(id, requestDto.getPassword())) {      //비밀번호가 같지 않을 때 사용!
             return -999L;
         }
-
         Blog blog = blogRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-
         blog.update(requestDto);
         return blog.getId();
     }
-
+    //삭제
     @Transactional
     public Long deleteBlog(Long id, String password) {
         if (!validatePassword(id, password)) {
             return -999L;
         }
-
         blogRepository.deleteById(id);
         return id;
     }
-
     private Boolean validatePassword(Long id, String password) {
         return password.equals(blogRepository.getReferenceById(id).getPassword());
     }
-
-
 }
 
 //    @Transactional(readOnly = true)
