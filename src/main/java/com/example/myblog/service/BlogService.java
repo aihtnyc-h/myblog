@@ -51,13 +51,13 @@ public List<Blog> getBlog() {
         return new BlogResponseDto(blog);
     }
 
-    @Transactional(readOnly = true)
-    public BlogRequestDto blog(Long id) {
-        Blog blog = blogRepository.findById(id).orElseThrow(
-                ()  -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-        );
-        return new BlogRequestDto();
-    }
+//    @Transactional(readOnly = true)
+//    public BlogRequestDto blog(Long id) {
+//        Blog blog = blogRepository.findById(id).orElseThrow(
+//                ()  -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+//        );
+//        return new BlogRequestDto();
+//    }
     //수정
     @Transactional
     public Long updateBlog(Long id, BlogRequestDto requestDto) {

@@ -23,10 +23,10 @@ public class BlogController {
         return blogService.getBlog();
     }
     //게시글 조회하기 서버
-    @GetMapping("/api/blog")
-    public List<Blog> getBlog(@PathVariable Long id) {
-        return blogService.getBlog();
-    }
+//    @GetMapping("/api/blog")
+//    public List<Blog> getBlog(@PathVariable Long id) {
+//        return blogService.getBlog();
+//    }
     //게시글 한개 조회하기 서버
     @GetMapping("/api/blog/{id}")
     public Optional<Blog> getBlogs(@PathVariable Long id){
