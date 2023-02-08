@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 //@Service
 //@RequiredArgsConstructor
@@ -131,29 +132,35 @@ public class BlogService {
 
         return new BlogDto<>("success", responseDtoList);
     }
-
+        @Transactional
+    public Optional<Blog> getBlogs(Long id) {
+            Blog blog = blogRepository.findById(id).orElseThrow(
+                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+            );
+            return blogRepository.findById(id);
+        }
     @Transactional
     public BlogDto<BlogMessageDto> createBlog(BlogRequestDto requestDto) {
         Blog blog = new Blog(requestDto);
         blogRepository.save(blog);
-        return new BlogDto<>("success", new BlogMessageDto("게시글 작성 성공했습니다."));
+        return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 작성 성공했습니다."));
     }
 
-    @Transactional(readOnly = true)
-    public BlogDto<?> getPost(Long id) {
-        // DTO<T> 만들어서 Exception 핸들링 할 것
-        Blog blog;
-
-        try {
-            blog = blogRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-            );
-        } catch (IllegalArgumentException exception) {
-            return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("게시글이 존재하지 않습니다."));
-        }
-
-        return new BlogDto<BlogResponseDto>("success", new BlogResponseDto(blog));
-    }
+//    @Transactional(readOnly = true)
+//    public BlogDto<?> getPost(Long id) {
+//
+//        Blog blog;
+//
+//        try {
+//            blog = blogRepository.findById(id).orElseThrow(
+//                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+//            );
+//        } catch (IllegalArgumentException exception) {
+//            return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("게시글이 존재하지 않습니다."));
+//        }
+//
+//        return new BlogDto<BlogResponseDto>("success", new BlogResponseDto(blog));
+//    }
 
     @Transactional
     public BlogDto<BlogMessageDto> updateBlog(Long id, BlogRequestDto requestDto) {

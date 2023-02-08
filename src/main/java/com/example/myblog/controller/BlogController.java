@@ -2,10 +2,13 @@ package com.example.myblog.controller;
 
 import com.example.myblog.dto.BlogDto;
 import com.example.myblog.dto.BlogRequestDto;
+import com.example.myblog.entity.Blog;
 import com.example.myblog.service.BlogService;
 import com.example.myblog.dto.BlogMessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 @RestController
@@ -28,9 +31,9 @@ public class BlogController {
 //    }
     //게시글 한개 조회하기 서버
     @GetMapping("/api/blog/{id}")
-    public BlogDto<?> getBlog(@PathVariable Long id){
+    public Optional<Blog> getBlogs(@PathVariable Long id){
 
-        return blogService.getBlog();
+        return blogService.getBlogs(id);
 //        return ResponseUtil.SUCCESS("조회에 성공하였습니다.", UserList);
     }
     // 게시글 생성하기 서버
