@@ -1,1 +1,1 @@
-# myblog<img width="384" alt="api수정" src="https://user-images.githubusercontent.com/111184537/217432933-c5da82d2-953d-4729-8e0c-a36c696827ad.PNG">
+<img width="578" alt="api수정2222" src="https://user-images.githubusercontent.com/111184537/217433476-876d5c96-f2cc-4f92-8bf1-4348145ac776.PNG">
