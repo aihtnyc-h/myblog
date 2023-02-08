@@ -1,6 +1,9 @@
 package com.example.myblog.dto;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class BlogRequestDto {
@@ -10,3 +13,4 @@ public class BlogRequestDto {
     private String password;
 
 }
+
