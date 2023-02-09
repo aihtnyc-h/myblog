@@ -37,7 +37,7 @@ import java.util.Optional;
 //    public List<Blog> getBlog() {
 //        return blogRepository.findAllByOrderByModifiedAtDesc();
 //    }
-////한개 조회
+//한개 조회
 //    @Transactional
 //    public Optional<Blog> getBlogs(Long id) {
 //    Blog blog = blogRepository.findById(id).orElseThrow(
@@ -116,35 +116,35 @@ import java.util.Optional;
 public class BlogService {
     private final BlogRepository blogRepository;
 
-    @Transactional(readOnly = true)
-    public BlogDto<?> getBlog() {
-        List<Blog> list = blogRepository.findAllByOrderByModifiedAtDesc();
-
-        if (list.size() == 0) {
-            return new BlogDto<>("failure", new BlogMessageDto("작성된 게시글이 없습니다."));
-        }
-
-        List<BlogResponseDto> responseDtoList = new ArrayList<>();
-
-        for (Blog blog : list) {
-            responseDtoList.add(new BlogResponseDto(blog));
-        }
-
-        return new BlogDto<>("success", responseDtoList);
-    }
-        @Transactional
-    public Optional<Blog> getBlogs(Long id) {
-            Blog blog = blogRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-            );
-            return blogRepository.findById(id);
-        }
-    @Transactional
-    public BlogDto<BlogMessageDto> createBlog(BlogRequestDto requestDto) {
-        Blog blog = new Blog(requestDto);
-        blogRepository.save(blog);
-        return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 작성 성공했습니다."));
-    }
+//    @Transactional(readOnly = true)
+//    public BlogDto<?> getBlog() {
+//        List<Blog> list = blogRepository.findAllByOrderByModifiedAtDesc();
+//
+//        if (list.size() == 0) {
+//            return new BlogDto<>("failure", new BlogMessageDto("작성된 게시글이 없습니다."));
+//        }
+//
+//        List<BlogResponseDto> responseDtoList = new ArrayList<>();
+//
+//        for (Blog blog : list) {
+//            responseDtoList.add(new BlogResponseDto(blog));
+//        }
+//
+//        return new BlogDto<>("success", responseDtoList);
+//    }
+//        @Transactional
+//    public Optional<Blog> getBlogs(Long id) {
+//            Blog blog = blogRepository.findById(id).orElseThrow(
+//                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+//            );
+//            return blogRepository.findById(id);
+//        }
+//    @Transactional
+//    public BlogDto<BlogMessageDto> createBlog(BlogRequestDto requestDto) {
+//        Blog blog = new Blog(requestDto);
+//        blogRepository.save(blog);
+//        return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 작성 성공했습니다."));
+//    }
 
 //    @Transactional(readOnly = true)
 //    public BlogDto<?> getPost(Long id) {
@@ -161,53 +161,53 @@ public class BlogService {
 //
 //        return new BlogDto<BlogResponseDto>("success", new BlogResponseDto(blog));
 //    }
-
-    @Transactional
-    public BlogDto<BlogMessageDto> updateBlog(Long id, BlogRequestDto requestDto) {
-        // 비밀번호 확인보다 id를 먼저 조회해야 한다 생각해서 위로 올렸다.
-        Blog blog;
-
-        try {
-            blog = blogRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-            );
-        } catch (IllegalArgumentException exception) {
-            return new  BlogDto<BlogMessageDto>("failure", new BlogMessageDto("게시글이 존재하지 않습니다."));
-        }
-
-        if (!validatePassword(id, requestDto.getPassword())) {
-            return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("비밀번호가 틀렸습니다."));
-        }
-
-        blog.update(requestDto);
-        return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 변경 성공"));
-    }
-
-    @Transactional
-    public BlogDto<? extends Object> deleteBlog(Long id, String password) {
+//
+//    @Transactional
+//    public BlogDto<BlogMessageDto> updateBlog(Long id, BlogRequestDto requestDto) {
+//        // 비밀번호 확인보다 id를 먼저 조회해야 한다 생각해서 위로 올렸다.
+//        Blog blog;
+//
 //        try {
-//            blogRepository.findById(id).orElseThrow(
+//            blog = blogRepository.findById(id).orElseThrow(
 //                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
 //            );
 //        } catch (IllegalArgumentException exception) {
-//            return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("게시글이 존재하지 않습니다."));
+//            return new  BlogDto<BlogMessageDto>("failure", new BlogMessageDto("게시글이 존재하지 않습니다."));
 //        }
-
-        if (!validatePassword(id, password)) {
-            return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("비밀번호가 틀렸습니다."));
-        }
-
-        blogRepository.deleteById(id);
-        return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 삭제 성공"));
-    }
-
-
-    private Boolean validatePassword(Long id, String password) {
-        return password.equals(blogRepository.getReferenceById(id).getPassword());
-    }
-
-
-}
+//
+//        if (!validatePassword(id, requestDto.getPassword())) {
+//            return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("비밀번호가 틀렸습니다."));
+//        }
+//
+//        blog.update(requestDto);
+//        return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 변경 성공"));
+//    }
+//
+//    @Transactional
+//    public BlogDto<? extends Object> deleteBlog(Long id, String password) {
+////        try {
+////            blogRepository.findById(id).orElseThrow(
+////                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+////            );
+////        } catch (IllegalArgumentException exception) {
+////            return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("게시글이 존재하지 않습니다."));
+////        }
+//
+//        if (!validatePassword(id, password)) {
+//            return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("비밀번호가 틀렸습니다."));
+//        }
+//
+//        blogRepository.deleteById(id);
+//        return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 삭제 성공"));
+//    }
+//
+//
+//    private Boolean validatePassword(Long id, String password) {
+//        return password.equals(blogRepository.getReferenceById(id).getPassword());
+//    }
+//
+//
+//}
 
 //    @Transactional(readOnly = true)
 //    public Optional<Memo> getPost(Long id) {
@@ -248,3 +248,90 @@ public class BlogService {
 //
 //        return password;
 //    }
+
+    @Transactional
+    public BlogResponseDto createBlog(BlogRequestDto requestDto) {
+        Blog blog = new Blog(requestDto);
+        blogRepository.save(blog);
+        return new BlogResponseDto(blog);
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<Blog> getBlog() {
+        return blogRepository.findAllByOrderByModifiedAtDesc();
+    }
+
+    //한개 조회
+    @Transactional
+    public Optional<Blog> getBlogs(Long id) {
+        Blog blog = blogRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
+        return blogRepository.findById(id);
+    }
+// 게시물 수정
+//    @Transactional
+//    public Long updateBlog(Long id, BlogRequestDto requestDto) {
+//        if (!validatePassword(id, requestDto.getPassword())) {      //비밀번호가 같지 않을 때 사용!
+//            return -999L;
+//        }
+//
+//        Blog blog = blogRepository.findById(id).orElseThrow(
+//                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+//        );
+//        blog.update(requestDto);
+//        return blog.getId();
+//    }
+    @Transactional
+    public BlogDto<BlogMessageDto> updateBlog(Long id, BlogRequestDto requestDto) {
+        // 비밀번호 확인보다 id를 먼저 조회해야 한다 생각해서 위로 올렸다.
+        Blog blog;
+
+        try {
+            blog = blogRepository.findById(id).orElseThrow(
+                    () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+            );
+        } catch (IllegalArgumentException exception) {
+            return new  BlogDto<BlogMessageDto>("failure", new BlogMessageDto("게시글이 존재하지 않습니다."));
+        }
+
+        if (!validatePassword(id, requestDto.getPassword())) {
+            return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("비밀번호가 틀렸습니다."));
+        }
+
+        blog.update(requestDto);
+        return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 변경 성공"));
+    }
+
+
+    // 게시글 삭제
+//    @Transactional
+//    public Long deleteBlog(Long id, String password) {
+//        if (!validatePassword(id, password)) {
+//            return -999L;
+//        }
+//
+//        blogRepository.deleteById(id);
+//        return id;
+//    }
+//    private Boolean validatePassword(Long id, String password) {
+//        return password.equals(blogRepository.getReferenceById(id).getPassword());
+//    }
+
+  // 게시글 삭제
+     @Transactional
+     public BlogDto<? extends Object> deleteBlog(Long id, String password) {
+     if (!validatePassword(id, password)) {
+         return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("비밀번호를 다시 확인하세요."));
+     }
+     blogRepository.deleteById(id);
+     return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 삭제 성공"));
+ }
+
+    private boolean validatePassword(Long id, String password) {
+        return password.equals(blogRepository.getReferenceById(id).getPassword());
+    }
+
+
+}
