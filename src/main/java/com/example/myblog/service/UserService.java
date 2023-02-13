@@ -4,18 +4,21 @@ import com.example.myblog.dto.LoginRequestDto;
 import com.example.myblog.dto.SignupRequestDto;
 import com.example.myblog.entity.User;
 import com.example.myblog.entity.UserRoleEnum;
+import com.example.myblog.jwt.JwtUtil;
 import com.example.myblog.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
@@ -44,7 +47,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public void login(LoginRequestDto loginRequestDto) {
+    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
@@ -52,10 +55,11 @@ public class UserService {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
-
         // 비밀번호 확인
         if(!user.getPassword().equals(password)){
             throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
     }
 }

@@ -20,6 +20,8 @@ public class Blog extends Timestamped{
     @Column(nullable = false)
     private String titlename;
     @Column(nullable = false)
+    private Long userId;
+    @Column(nullable = false)
     private String password;
 
 
