@@ -107,4 +107,5 @@ public class BlogController {
     public BlogDto<?> deleteBlog(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
         return blogService.deleteBlog(id, requestDto.getPassword());
     }
+    // 커밋 푸쉬 연습하자
 }
