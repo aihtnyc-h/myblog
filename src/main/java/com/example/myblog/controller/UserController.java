@@ -28,8 +28,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signup(SignupRequestDto signupRequestDto) {
-        userService.signup(signupRequestDto);
+    public String signup(@RequestBody SignupRequestDto signupRequestDto) {
+        userService.signup(signupRequestDto);   //이메일이 왜 안들어갔는지 찾아보 여기서부터 값을 못받아온다아아아아 받아오게 만들자!!
         return "redirect:/api/user/login";
     }
 

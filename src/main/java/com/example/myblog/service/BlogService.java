@@ -40,7 +40,7 @@ public class BlogService {
 
     // 게시글 작성 API
     @Transactional(readOnly = true)
-    public List<BlogResponseDto> createBlog(HttpServletRequest request) {
+    public List<BlogResponseDto> createBlog(BlogRequestDto requestDto, HttpServletRequest request) {
         // Request에서 Token 가져오기
         String token = jwtUtil.resolveToken(request);
         Claims claims;

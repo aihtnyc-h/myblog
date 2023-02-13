@@ -42,7 +42,7 @@ public class UserService {
             role = UserRoleEnum.ADMIN;
         }
 
-        User user = new User(username, password, email, role);
+        User user = new User(username, password, email, role);  //이메일이 왜 안들어갔는지 찾기
         userRepository.save(user);
     }
 

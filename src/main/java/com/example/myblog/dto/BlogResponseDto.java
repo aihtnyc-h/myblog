@@ -17,7 +17,7 @@ public class BlogResponseDto {
 
     private String title;
     private String contents;
-    private String username;
+    private String userName;
     private String password;
     private LocalDateTime createdAt;
 
@@ -28,9 +28,9 @@ public class BlogResponseDto {
 //    public List<BlogResponseDto> blogResponseDto = new ArrayList<>();
 
     public BlogResponseDto(Blog blog) {
-        this.title = blog.getTitlename();
+        this.title = blog.getTitleName();
         this.contents = blog.getContents();
-        this.username = blog.getUsername();
+        this.userName = blog.getUserName();
         this.password = blog.getPassword();
         this.createdAt = blog.getCreatedAt();
 

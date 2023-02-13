@@ -7,9 +7,9 @@ import java.util.List;
 
 @Getter
 public class BlogRequestDto {
-    private String username;
+    private String userName;
     private String contents;
-    private String titlename;
+    private String titleName;
     private String password;
 
 }

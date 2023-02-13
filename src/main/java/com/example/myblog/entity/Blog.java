@@ -14,11 +14,11 @@ public class Blog extends Timestamped{
     @GeneratedValue(strategy = GenerationType.AUTO)     // AUTO말고 다른 타입들 공부하기
     private Long id; // 기본키 설정!
     @Column(nullable = false)
-    private String username;
+    private String userName;
     @Column(nullable = false)
     private String contents;
     @Column(nullable = false)
-    private String titlename;
+    private String titleName;
     @Column(nullable = false)
     private Long userId;
     @Column(nullable = false)
@@ -26,17 +26,17 @@ public class Blog extends Timestamped{
 
 
     public Blog(BlogRequestDto requestDto) {
-        this.username = requestDto.getUsername();
+        this.userName = requestDto.getUserName();
         this.contents = requestDto.getContents();
-        this.titlename = requestDto.getTitlename();
+        this.titleName = requestDto.getTitleName();
         this.password = requestDto.getPassword();
 
 
     }
     public void update(BlogRequestDto requestDto) {
-        this.username = requestDto.getUsername();
+        this.userName = requestDto.getUserName();
         this.contents = requestDto.getContents();
-        this.titlename = requestDto.getTitlename();
+        this.titleName = requestDto.getTitleName();
         this.password = requestDto.getPassword();
 
     }
