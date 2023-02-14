@@ -72,7 +72,7 @@ public class BlogService {
     public List<BlogResponseDto> getBlogs() {
         List<BlogResponseDto> list = new ArrayList<>();
         List<Blog> blogList;
-        blogList = blogRepository.findAllByUserName(requestDto.getUserName());
+        blogList = blogRepository.findAll();
         for (Blog i : blogList) {
             list.add(new BlogResponseDto((i)));
         }
