@@ -21,6 +21,7 @@ public class Blog extends Timestamped{
     private String titleName;
     @Column(nullable = false)
     private Long userId;
+    // userId에서
     @Column(nullable = false)
     private String password;
 
@@ -30,7 +31,7 @@ public class Blog extends Timestamped{
         this.contents = requestDto.getContents();
         this.titleName = requestDto.getTitleName();
         this.password = requestDto.getPassword();
-
+        this.userId = userId;
 
     }
     public void update(BlogRequestDto requestDto) {

@@ -26,20 +26,20 @@ public class UserService {
     public void signup(SignupRequestDto signupRequestDto){
         String username = signupRequestDto.getUsername();
         System.out.println(username);
-//        if (username.length() < 4 || username.length() > 10){
-//            throw new RuntimeException("아이디를 조건에 맞게 입력해주세요.");
-//        }
-//        if (!username.matches("^[0-9|a-z]*$")){
-//            throw new RuntimeException("아이디를 조건에 맞게 입력해주세요.");
-//        }
+        if (username.length() < 4 || username.length() > 10){
+            throw new RuntimeException("아이디를 조건에 맞게 입력해주세요.");
+        }
+        if (!username.matches("^[0-9|a-z]*$")){
+            throw new RuntimeException("아이디를 조건에 맞게 입력해주세요.");
+        }
         String password = signupRequestDto.getPassword();
         System.out.println(password);
-//        if (password.length() < 8 || password.length() > 15){
-//            throw new RuntimeException("비밀번호를 조건에 맞게 입력해주세요.");
-//        }
-//        if (!password.matches("^[0-9|a-z|A-Z]*$")){
-//            throw new RuntimeException("비밀번호를 조건에 맞게 입력해주세요.");
-//        }
+        if (password.length() < 8 || password.length() > 15){
+            throw new RuntimeException("비밀번호를 조건에 맞게 입력해주세요.");
+        }
+        if (!password.matches("^[0-9|a-z|A-Z]*$")){
+            throw new RuntimeException("비밀번호를 조건에 맞게 입력해주세요.");
+        }
 
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()){
@@ -48,7 +48,7 @@ public class UserService {
 
         UserRoleEnum role = UserRoleEnum.USER;
         if(signupRequestDto.isAdmin()){
-            if(!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)){
+            if(signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)){
                 throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
             }
             role = UserRoleEnum.ADMIN;
