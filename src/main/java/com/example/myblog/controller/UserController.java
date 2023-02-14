@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @ResponseBody
-    @PostMapping("/login")
+    @PostMapping("/login")  //400에러
     public String login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         userService.login(loginRequestDto, response);
         return "success";

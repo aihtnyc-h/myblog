@@ -26,7 +26,8 @@ public class BlogService {
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-//    @Transactional
+
+    //    @Transactional
 //    public BlogResponseDto createBlog(BlogRequestDto requestDto) {
 //        Blog blog = new Blog(requestDto);
 //        blogRepository.save(blog);
@@ -34,13 +35,43 @@ public class BlogService {
 //    }
     // 전체 게시글 목록 조회
     @Transactional(readOnly = true)
-    public List<Blog> getBlog() {
-        return blogRepository.findAllByOrderByModifiedAtDesc();
+    public List<BlogResponseDto> getBlog() {
+        List<BlogResponseDto> list = new ArrayList<>();
+        List<Blog> blogList;
+
+        blogList = blogRepository.findAll();
+
+        for (Blog i : blogList) {
+            list.add(new BlogResponseDto(i));
+        }
+        return list;
     }
 
-    // 게시글 작성 API
+    // 게시글 1개 조회하기 (유저 이름을 기준! -> 기존 id와 user의 username을 같게 만들어주기!
     @Transactional(readOnly = true)
-    public List<BlogResponseDto> createBlog(BlogRequestDto requestDto, HttpServletRequest request) {
+    public List<BlogResponseDto> getBlogs(BlogRequestDto requestDto, HttpServletRequest request) {
+        User user = userRepository.findByUsername(requestDto.getUserName()).orElseThrow(
+                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+        );
+        List<BlogResponseDto> list = new ArrayList<>();
+        List<Blog> blogList;
+        blogList = blogRepository.findAllByUserName(requestDto.getUserName());
+        for (Blog i : blogList) {
+            list.add(new BlogResponseDto((i)));
+        }
+        return list;
+    }
+    // 선택한 게시글 조회   500에 아이디가 존재하지 않습니다.
+
+    //    public Optional<Blog> getBlogs(Long id) {
+//        Blog blog = blogRepository.findById(id).orElseThrow(
+//                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+//        );
+//        return blogRepository.findById(id);
+//    }
+    // 게시글 작성 API   // 숫자 1만 나옴;;;
+    @Transactional(readOnly = true)
+    public BlogResponseDto createBlog(BlogRequestDto requestDto, HttpServletRequest request) {
         // Request에서 Token 가져오기
         String token = jwtUtil.resolveToken(request);
         Claims claims;
@@ -60,38 +91,150 @@ public class BlogService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            // 사용자 권한 가져와서 ADMIN 이면 전체 조회, USER 면 본인이 추가한 부분 조회
-            UserRoleEnum userRoleEnum = user.getRole();
-            System.out.println("role = " + userRoleEnum);
-
-            List<BlogResponseDto> list = new ArrayList<>();
-            List<Blog> blogList;
-
-            if (userRoleEnum == UserRoleEnum.USER) {
-                // 사용자 권한이 USER일 경우
-                blogList = blogRepository.findAllByUserId(user.getId());
-            } else {
-                blogList = blogRepository.findAll();
-            }
-
-            for (Blog blog : blogList) {
-                list.add(new BlogResponseDto(blog));
-            }
-
-            return list;
-
+            // 요청받은 DTO로 DB에 저잘할 객체 만들기
+            Blog blog = blogRepository.saveAndFlush(new Blog(requestDto, user.getId()));
+            return new BlogResponseDto(blog);
         } else {
             return null;
+// List 버전
+//            // 사용자 권한 가져와서 ADMIN 이면 전체 조회, USER 면 본인이 추가한 부분 조회
+//            UserRoleEnum userRoleEnum = user.getRole();
+//            System.out.println("role = " + userRoleEnum);
+//
+//            List<BlogResponseDto> list = new ArrayList<>();
+//            List<Blog> blogList;
+//
+//            if (userRoleEnum == UserRoleEnum.USER) {
+//                // 사용자 권한이 USER일 경우
+//                blogList = blogRepository.findAllByUserName(user.getUsername());
+//            } else {
+//                blogList = blogRepository.findAll();
+//            }
+//
+//            for (Blog blog : blogList) {
+//                list.add(new BlogResponseDto(blog));
+//            }
+//
+//            return list;
+//
+//        } else {
+//            return null;
+//        }
         }
     }
 
-    // 선택한 게시글 조회
-
-
     // 선택한 게시글 수정
+    // - 토큰을 검사한 후, 유효한 토큰이면서 해당 사용자가 작성한 게시글만 수정 가능
+    //- 제목, 작성 내용을 수정하고 수정된 게시글을 Client 로 반환하기
+//    @Transactional
+//    public Object updateBlog(Long id, BlogRequestDto requestDto) {
+//        if (!validatePassword(id, requestDto.getPassword())) {      //비밀번호가 같지 않을 때 사용!
+//            String success;
+//            return blogRepository.findById(id);
+//        }
+//
+//        Blog blog = blogRepository.findById(id).orElseThrow(
+//                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+//        );
+//        blog.update(requestDto);
+//        return blog.getId();
+//    }
+    @Transactional(readOnly = true)
+    public BlogResponseDto update(Long id, BlogRequestDto requestDto, HttpServletRequest request) {  // @RequestBody 제거함
+        // Request에서 Token 가져오기
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        // 토큰이 있는 경우에만 게시글 수정 가능
+        if (token != null) {
+            // Token 검증
+            if (jwtUtil.validateToken(token)) {
+                // 토큰에서 사용자 정보 가져오기
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+
+            // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+
+            Blog blog = blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+
+            blog.update(requestDto);
+            BlogResponseDto blogResponseDto = new BlogResponseDto(blog);
+
+            return blogResponseDto;
+        }
+        return null;
+    }
 
 
+    // List로 사용했을 때
+    // 사용자 권한 가져와서 ADMIN 이면 전체 조회, USER 면 본인이 추가한 부분 조회
+//            UserRoleEnum userRoleEnum = user.getRole();
+//            System.out.println("role = " + userRoleEnum);
+//
+//            List<BlogResponseDto> list = new ArrayList<>();
+//            List<Blog> blogList;
+//
+//            if (userRoleEnum == UserRoleEnum.USER) {
+//                // 사용자 권한이 USER일 경우
+//                blogList = blogRepository.findAllByUserName(user.getUsername());
+//            } else {
+//                blogList = blogRepository.findAll();
+//            }
+//
+//            for (Blog blog : blogList) {
+//                list.add(new BlogResponseDto(blog));
+//            }
+//
+//            return list;
+//
+//        } else {
+//            return null;
+//        }
+//    }
     // 선택한 게시글 삭제
+//    @Transactional
+//     public BlogDto<? extends Object> deleteBlog(Long id, String password) {
+//     if (!validatePassword(id, password)) {
+//         return new BlogDto<BlogMessageDto>("failure", new BlogMessageDto("비밀번호를 다시 확인하세요."));
+//     }
+//     blogRepository.deleteById(id);
+//     return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 삭제 성공"));
+// }
+    //게시글 삭제
+    @Transactional(readOnly = true)
+    public Long deleteBlog(Long id, HttpServletRequest request) {
+
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
+
+        if (token != null) {
+            if (jwtUtil.validateToken(token)) {
+                claims = jwtUtil.getUserInfoFromToken(token);
+            } else {
+                throw new IllegalArgumentException("Token Error");
+            }
+
+            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+
+            Blog blog = blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+            );
+            blogRepository.deleteById(id);
+            return blog.getId();
+        }
+        return null;
+    }
+}
+
 
 //    @Transactional(readOnly = true)
 //    public List<Blog> getBlog() {
@@ -99,27 +242,15 @@ public class BlogService {
 //    }
 
     //한개 조회
-    @Transactional
-    public Optional<Blog> getBlogs(Long id) {
-        Blog blog = blogRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-        );
-        return blogRepository.findById(id);
-    }
+//    @Transactional
+//    public Optional<Blog> getBlogs(Long id) {
+//        Blog blog = blogRepository.findById(id).orElseThrow(
+//                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+//        );
+//        return blogRepository.findById(id);
+//    }
 
-    @Transactional
-    public Object updateBlog(Long id, BlogRequestDto requestDto) {
-        if (!validatePassword(id, requestDto.getPassword())) {      //비밀번호가 같지 않을 때 사용!
-            String success;
-            return blogRepository.findById(id);
-        }
 
-        Blog blog = blogRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-        );
-        blog.update(requestDto);
-        return blog.getId();
-    }
     //        @Transactional
 //        public BlogDto<BlogMessageDto> updateBlog(Long id, BlogRequestDto requestDto) {
 //            // 비밀번호 확인보다 id를 먼저 조회해야 한다 생각해서 위로 올렸다.
@@ -141,14 +272,14 @@ public class BlogService {
 //            return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 변경 성공"));
 //        }
     // 게시글 삭제
-    @Transactional
-    public Object deleteBlog(Long id, String password) {
-        if (!validatePassword(id, password)) {
-            return blogRepository.findById(id);
-        }
-        blogRepository.deleteById(id);
-        return id;
-    }
+//    @Transactional
+//    public Object deleteBlog(Long id, String password) {
+//        if (!validatePassword(id, password)) {
+//            return blogRepository.findById(id);
+//        }
+//        blogRepository.deleteById(id);
+//        return id;
+//    }
 
 
 //        @Transactional
@@ -160,11 +291,11 @@ public class BlogService {
 //            return new BlogDto<BlogMessageDto>("success", new BlogMessageDto("게시글 삭제 성공"));
 //        }
 
-    private boolean validatePassword(Long id, String password) {
-        return password.equals(blogRepository.getReferenceById(id).getPassword());
-    }
-
-}
+//    private boolean validatePassword(Long id, String password) {
+//        return password.equals(blogRepository.getReferenceById(id).getPassword());
+//    }
+//
+//}
 //@Service
 //@RequiredArgsConstructor
 //public class BlogService {

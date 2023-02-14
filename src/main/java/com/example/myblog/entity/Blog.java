@@ -25,7 +25,7 @@ public class Blog extends Timestamped{
     private String password;
 
 
-    public Blog(BlogRequestDto requestDto) {
+    public Blog(BlogRequestDto requestDto, Long userId) {
         this.userName = requestDto.getUserName();
         this.contents = requestDto.getContents();
         this.titleName = requestDto.getTitleName();
