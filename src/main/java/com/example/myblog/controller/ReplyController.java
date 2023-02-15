@@ -5,8 +5,9 @@ import com.example.myblog.service.ReplyService;
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Criteria;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/replies/")
-@Log
+@Log4j2
 @AllArgsConstructor
 public class ReplyController {
 
@@ -59,24 +60,24 @@ public class ReplyController {
 //        // T<List<ReplyVO>> t = new T<> ();
 //        // 댓글 목록을 출력하고, 정상 처리 상태를 리턴.
 //    }
-//    @GetMapping(value = "/{rno}",
-//            produces = {MediaType.APPLICATION_JSON_VALUE})
-//    public ResponseEntity<ReplyVO> get(@PathVariable("rno") Long rno) {
-//        log.info("get: " + rno);
-//        return new ResponseEntity<>(
-//                service.get(rno), HttpStatus.OK);
-//
-//    }
-//
-//
-//    @DeleteMapping(value="/{rno}"
-//            , produces = {MediaType.TEXT_PLAIN_VALUE})
-//    public ResponseEntity<String> remove(
-//            @PathVariable("rno") Long rno){
-//        log.info("remove: " + rno);
-//
-//        return service.remove(rno) == 1 ?
-//                new ResponseEntity<>("success", HttpStatus.OK)
-//                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @GetMapping(value = "/{rno}",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<ReplyVO> get(@PathVariable("rno") Long rno) {
+        log.info("get: " + rno);
+        return new ResponseEntity<>(
+                service.get(rno), HttpStatus.OK);
+
+    }
+
+
+    @DeleteMapping(value="/{rno}"
+            , produces = {MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<String> remove(
+            @PathVariable("rno") Long rno){
+        log.info("remove: " + rno);
+
+        return service.remove(rno) == 1 ?
+                new ResponseEntity<>("success", HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

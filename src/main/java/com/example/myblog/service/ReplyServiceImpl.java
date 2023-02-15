@@ -2,6 +2,7 @@ package com.example.myblog.service;
 
 import com.example.myblog.domain.ReplyVO;
 import com.example.myblog.mapper.ReplyMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j;
@@ -13,8 +14,8 @@ import java.util.List;
 
 @Service
 @Log
-public abstract class ReplyServiceImpl implements ReplyService{
-    @Setter(onMethod_ =@Autowired)
+@RequiredArgsConstructor
+public class ReplyServiceImpl implements ReplyService{
     private ReplyMapper mapper;
 
     @Override
