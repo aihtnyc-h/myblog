@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.review.mapper.ReplyMapper">
+    <insert id="insert">
+        insert into tbl_reply (rno, bno, reply, replyer)
+        values (seq_reply.nextval, #{bno},#{reply},#{replyer})
+    </insert>
+
+    <!-- 게시물당 조회가 아니라 댓글 1개 조회 -->
+    <select id="read" resultType="com.review.domain.ReplyVO">
+        select * from tbl_reply
+        where rno=#{rno}
+    </select>
+
+    <delete id="delete">
+        delete from tbl_reply where rno=#{rno}
+    </delete>
+
+    <update id="update">
+        update tbl_reply set reply=#{reply}, updatedate=sysdate
+        where rno=#{rno}
+    </update>
+
+    <select id="getListWithPaging" resultType="com.review.domain.ReplyVO">
+        select rno, bno, reply, replyer, replydate, updatedate
+        from tbl_reply where bno=#{bno}
+        order by rno asc
+    </select>
+</mapper>
