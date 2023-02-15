@@ -19,7 +19,7 @@ import java.util.Optional;
 public class BlogController {
 
 
-    private final BlogService blogService;
+    private final BlogService blogService;  // 의존성 주입!
 
     // 메인 페이지
     @GetMapping("/")
